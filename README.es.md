@@ -1,5 +1,11 @@
 # Route Response Canary
 
+## Nuevo: tarjeta de veracidad de la ruta
+
+**« La tarjeta del proveedor estaba verde, pero mi agente utilizó otro modelo. »** Ejecute `python3 route_truth_card.py demo --lang es` para ver una discrepancia sintética en segundos. Con sus capturas, use `python3 route_truth_card.py check --test test.json --route route.json --lang es`. Ambos objetos JSON requieren `model`, `protocol` y `config_revision`; la prueba también requiere `config_state: saved`, `outcome: usable`, `tested_at`, y la ruta `served_at` (ISO 8601 con zona horaria). Un borrador, un campo ausente o una prueba futura deja el resultado indeterminado; una prueba antigua queda obsoleta. La herramienta solo lee capturas y no descubre por sí misma la ruta real.
+
+**Proyectos relacionados:** [Magpie #1395](https://github.com/yetone/magpie/issues/1395) informa de una tarjeta saludable que solo comprueba un modelo y protocolo; [Magpie](https://github.com/yetone/magpie) es el enrutador vecino. No existe un complemento Magpie ni afiliación. La integración disponible es una captura JSON de una pasarela que usted controla.
+
 [Français](README.fr.md) · [English](README.md) · Español
 
 ## Nuevo: comprobar solicitudes comprimidas

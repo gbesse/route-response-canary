@@ -1,5 +1,11 @@
 # Route Response Canary
 
+## New: route truth card
+
+**“The provider card was green, but my agent used another model.”** Run `python3 route_truth_card.py demo --lang en` for a five-second synthetic mismatch. With saved evidence, use `python3 route_truth_card.py check --test test.json --route route.json --lang en`. Both JSON objects need `model`, `protocol`, and `config_revision`; the test also needs `config_state: saved`, `outcome: usable`, `tested_at`, while the route needs `served_at` (ISO 8601 with timezone). A draft, missing route field, or future test is inconclusive; an old matching test is stale. This tool reads captures only and cannot discover the actual route itself.
+
+**Related projects:** [Magpie #1395](https://github.com/yetone/magpie/issues/1395) reports one model and protocol being tested while the card appears healthy; [Magpie](https://github.com/yetone/magpie) is the neighboring router. There is no Magpie plugin or affiliation. The integration is a JSON capture exported from a gateway you control.
+
 [Français](README.fr.md) · English · [Español](README.es.md)
 
 ## New: check compressed requests
