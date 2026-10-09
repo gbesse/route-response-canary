@@ -1,5 +1,11 @@
 # Route Response Canary
 
+## Nouveau : carte de vérité de la route
+
+**« La carte du fournisseur était verte, mais mon agent a utilisé un autre modèle. »** Lancez `python3 route_truth_card.py demo --lang fr` pour une divergence synthétique en quelques secondes. Avec vos captures, utilisez `python3 route_truth_card.py check --test test.json --route route.json --lang fr`. Les deux objets JSON exigent `model`, `protocol` et `config_revision` ; le test exige aussi `config_state: saved`, `outcome: usable`, `tested_at`, et la route `served_at` (ISO 8601 avec fuseau). Un brouillon, un champ absent ou un test futur reste indéterminé ; un test ancien est périmé. L’outil lit les captures et ne découvre pas lui-même la route réelle.
+
+**Projets voisins :** [Magpie #1395](https://github.com/yetone/magpie/issues/1395) signale qu’une carte verte peut tester un seul modèle et protocole ; [Magpie](https://github.com/yetone/magpie) est le routeur voisin. Aucune extension Magpie ni affiliation n’est revendiquée. L’intégration disponible est une capture JSON d’une passerelle que vous contrôlez.
+
 Français · [English](README.md) · [Español](README.es.md)
 
 ## Nouveau : contrôler les requêtes compressées
