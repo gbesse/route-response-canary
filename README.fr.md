@@ -1,5 +1,17 @@
 # Route Response Canary
 
+## Nouveau : une erreur SSE amont est-elle devenue un succès ?
+
+`python3 failure_receipt.py demo --lang fr` compare trois paires **synthétiques** : une erreur amont non standard transformée en réponse terminée vide, une erreur préservée en aval et un témoin sain. Un simple marqueur de fin ne suffit pas à établir une sortie exploitable. Ce contrôle traite la frontière signalée dans [Magpie #1933](https://github.com/yetone/magpie/issues/1933) ; il lit des captures indépendamment, sans intégration à Magpie ou Codex.
+
+```sh
+python3 failure_receipt.py check examples/failure-receipt/false-success.json --lang fr --json
+```
+
+Fournir un objet JSON avec `upstream_protocol` (`messages` ou `responses`), `upstream` et `downstream`. Chaque côté contient `status`, `content_type` et le `body` SSE enregistré. L’appariement est votre déclaration : l’outil ne corrèle pas les requêtes indépendamment. Il reconnaît les noms d’événements SSE, les données multilignes, CRLF, les erreurs explicites, les erreurs HTTP et les sorties Responses terminées (texte, refus ou appel de fonction). Une erreur amont suivie de `response.completed` en aval constitue un faux succès, même avec une sortie non vide. Une réponse terminée sans sortie exploitable échoue aussi. Une erreur suivie d’une fin réussie est contradictoire et échoue si elle est appariée à une erreur amont.
+
+Codes de sortie : **0** erreur préservée ou témoin sain, **2** faux succès ou réponse terminée vide, **3** résultat indéterminé, **1** entrée invalide. La démo sort avec 0 si les trois verdicts attendus sont reproduits. Le JSON est limité à 4,1 Mo, chaque corps à 2 Mo. Les rapports ne contiennent que statuts, compteurs et contrôles, sans contenu des flux ni messages d’erreur. Les reprises, l’identité du backend, la causalité des requêtes et tous les types de sortie Responses ne sont pas vérifiés. Sain signifie une sortie exploitable dans ces captures, pas une réponse sémantiquement correcte. Python 3.11+, bibliothèque standard uniquement.
+
 ## Nouveau : carte de vérité de la route
 
 **« La carte du fournisseur était verte, mais mon agent a utilisé un autre modèle. »** Lancez `python3 route_truth_card.py demo --lang fr` pour une divergence synthétique en quelques secondes. Avec vos captures, utilisez `python3 route_truth_card.py check --test test.json --route route.json --lang fr`. Les deux objets JSON exigent `model`, `protocol` et `config_revision` ; le test exige aussi `config_state: saved`, `outcome: usable`, `tested_at`, et la route `served_at` (ISO 8601 avec fuseau). Un brouillon, un champ absent ou un test futur reste indéterminé ; un test ancien est périmé. L’outil lit les captures et ne découvre pas lui-même la route réelle.

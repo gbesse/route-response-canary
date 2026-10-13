@@ -1,0 +1,13 @@
+{
+  "upstream_protocol": "messages",
+  "upstream": {
+    "status": 200,
+    "content_type": "text/event-stream",
+    "body": "event: error\ndata: {\"type\":\"error\",\"error\":\"synthetic failure\"}\n\n"
+  },
+  "downstream": {
+    "status": 200,
+    "content_type": "text/event-stream",
+    "body": "data: {\"type\":\"response.failed\",\"response\":{\"status\":\"failed\",\"error\":{\"message\":\"synthetic failure\"}}}\n\n"
+  }
+}

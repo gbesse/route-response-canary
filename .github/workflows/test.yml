@@ -12,3 +12,6 @@ jobs:
           python-version: '3.11'
       - run: python3 -m pip install -r requirements.txt
       - run: python3 -m unittest discover -s tests -q
+      - name: FR EN ES offline demo
+        run: |
+          for lang in fr en es; do python3 failure_receipt.py demo --lang "$lang"; done
