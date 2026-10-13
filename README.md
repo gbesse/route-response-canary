@@ -1,5 +1,17 @@
 # Route Response Canary
 
+## New: did an upstream SSE error become a successful completion?
+
+`python3 failure_receipt.py demo --lang en` compares three **synthetic** pairs: a nonstandard upstream error converted into an empty completion, an error preserved downstream, and a healthy control. It also rejects a bare completion marker as usable output. This addresses the failure boundary reported in [Magpie #1933](https://github.com/yetone/magpie/issues/1933); it is an independent capture checker, with no Magpie or Codex integration.
+
+```sh
+python3 failure_receipt.py check examples/failure-receipt/false-success.json --lang en --json
+```
+
+Supply one JSON object with `upstream_protocol` (`messages` or `responses`), `upstream` and `downstream`. Each side contains `status`, `content_type` and the saved SSE `body`. Pairing is your assertion: the tool cannot correlate requests independently. It recognizes SSE event names, multiline data, CRLF, explicit error events, HTTP errors and completed Responses output (text, refusal or function call). An upstream error plus downstream `response.completed` is a false success even if output is nonempty. A completion without usable output also fails the gate. A failure event plus a completion is contradictory and fails when paired with an upstream error.
+
+Exit codes: **0** preserved failure or healthy control, **2** false success or empty completion, **3** inconclusive, **1** invalid input. The demo exits 0 when its three expected verdicts are reproduced. Capture JSON is limited to 4.1 MB, each body to 2 MB. Reports contain only status, counts and checks; no stream content or error messages. This does not verify retries, backend identity, request causality or all Responses output types. Healthy means usable output in these supplied captures, not a semantically correct answer. Python 3.11+, standard library only.
+
 ## New: route truth card
 
 **“The provider card was green, but my agent used another model.”** Run `python3 route_truth_card.py demo --lang en` for a five-second synthetic mismatch. With saved evidence, use `python3 route_truth_card.py check --test test.json --route route.json --lang en`. Both JSON objects need `model`, `protocol`, and `config_revision`; the test also needs `config_state: saved`, `outcome: usable`, `tested_at`, while the route needs `served_at` (ISO 8601 with timezone). A draft, missing route field, or future test is inconclusive; an old matching test is stale. This tool reads captures only and cannot discover the actual route itself.
